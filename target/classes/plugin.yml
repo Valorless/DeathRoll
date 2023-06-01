@@ -1,0 +1,29 @@
+name: DeathRoll
+main: valorless.deathroll.Main
+version: 0.0.1.26
+author: Valorless
+depend: [ValorlessUtils]
+api-version: 1.18
+commands:
+  deathroll:
+    description: Death Rolls between 1 to the chosen value.
+    usage: 
+    aliases: [roll, dr]
+  deathroll reload:
+    description: Reloads the configuration file.
+    usage: /deathroll reload
+    permission: deathroll.reload
+    permission-message: You don't have deathroll.reload.
+permissions:
+  deathroll.*:
+    description: Gives access to all DeathRoll commands.
+    children:
+      deathroll.reload: true
+      deathroll.roll: true
+  deathroll.reload:
+    description: Allows you to reload the configuration.
+    default: op
+  deathroll.roll:
+    description: Allows you to Death Roll.
+    default: op
+  
