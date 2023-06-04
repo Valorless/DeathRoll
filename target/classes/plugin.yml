@@ -1,6 +1,6 @@
 name: DeathRoll
 main: valorless.deathroll.Main
-version: 0.0.1.26
+version: 0.0.1.27
 author: Valorless
 depend: [ValorlessUtils]
 api-version: 1.18

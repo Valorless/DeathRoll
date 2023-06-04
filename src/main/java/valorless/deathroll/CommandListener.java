@@ -32,7 +32,7 @@ public class CommandListener implements CommandExecutor {
     		if(!Main.config.GetBool("enabled")) return false;
     		if (sender instanceof Player) {
     			Player player = (Player) sender;
-    			if(!player.hasPermission("deathrolling.roll")) {
+    			if(!player.hasPermission("deathroll.roll")) {
     				player.sendMessage(Lang.Get("no-permission"));
     			} else {
     				if(!Utils.IsStringNullOrEmpty(args[0])){
