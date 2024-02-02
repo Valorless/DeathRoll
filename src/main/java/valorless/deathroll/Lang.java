@@ -1,58 +1,62 @@
 package valorless.deathroll;
 
 import valorless.valorlessutils.config.Config;
+import valorless.valorlessutils.utils.Utils;
+import valorless.valorlessutils.ValorlessUtils.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 
-import valorless.valorlessutils.ValorlessUtils.Log;
-import valorless.valorlessutils.ValorlessUtils.Utils;
+import me.clip.placeholderapi.PlaceholderAPI;
+import valorless.deathroll.hooks.PlaceholderAPIHook;
 
 public class Lang {
 	public static Config lang;
+	public static Placeholders placeholders;
 	
-	public static String Parse(String text) {
+	public static void SetPlaceholders(Placeholders p) {
+		placeholders = p;
+	}
+	
+	public static String Parse(String text, OfflinePlayer player) {
 		if(!Utils.IsStringNullOrEmpty(text)) {
-			text = hex(text);
-			text = text.replace("{prefix}", lang.GetString("prefix"));
+			text = text.replace("%prefix%", lang.GetString("prefix"));
+			if(placeholders != null) {
+				text = text.replace("%roll%", String.valueOf(placeholders.roll));
+				text = text.replace("%roll-out-of%", String.valueOf(placeholders.rollOutOf));
+				text = text.replace("%player%", placeholders.player.getName());
+			}
 			text = text.replace("&", "§");
 			text = text.replace("\\n", "\n");
 		}
+		text = (ParsePlaceholders(text, player));
 		return hex(text);
 	}
 	
-	public static String Get(String key) {
+	public static String Get(String key, OfflinePlayer... player) {
 		if(lang.Get(key) == null) {
 			Log.Error(Main.plugin, String.format("Messages.yml is missing the key '%s'!", key));
 			return "§4error";
 		}
-		return Parse(lang.GetString(key));
+		if(player.length != 0) {
+			return Parse(lang.GetString(key), player[0]);
+		}else {
+			OfflinePlayer[] offp = Bukkit.getOfflinePlayers();
+			// Choose random player as placeholder to parse strings, without a defined player.
+			return Parse(lang.GetString(key), offp[0]);
+		}
 	}
 	
-	public static String Get(String key, Object arg) {
-		if(lang.Get(key) == null) {
-			Log.Error(Main.plugin, String.format("Messages.yml is missing the key '%s'!", key));
-			return "§4error";
+	public static String ParsePlaceholders(String text, OfflinePlayer player) {
+		if(PlaceholderAPIHook.isHooked()) {
+			return PlaceholderAPI.setPlaceholders(player, text);
+		}else {
+			return text;
 		}
-		return Parse(String.format(lang.GetString(key), String.valueOf(arg)));
-	}
-	
-	public static String Get(String key, Object arg1, Object arg2) {
-		if(lang.Get(key) == null) {
-			Log.Error(Main.plugin, String.format("Messages.yml is missing the key '%s'!", key));
-			return "§4error";
-		}
-		return Parse(String.format(lang.GetString(key), String.valueOf(arg1), String.valueOf(arg2)));
-	}
-	
-	public static String Get(String key, Object arg1, Object arg2, Object arg3) {
-		if(lang.Get(key) == null) {
-			Log.Error(Main.plugin, String.format("Messages.yml is missing the key '%s'!", key));
-			return "§4error";
-		}
-		return Parse(String.format(lang.GetString(key), String.valueOf(arg1), String.valueOf(arg2), String.valueOf(arg3)));
 	}
 	
 	public static String hex(String message) {

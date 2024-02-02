@@ -1,8 +1,9 @@
 name: DeathRoll
 main: valorless.deathroll.Main
-version: 0.0.1.27
+version: version-number
 author: Valorless
 depend: [ValorlessUtils]
+softdepend: [PlaceholderAPI]
 api-version: 1.18
 commands:
   deathroll:

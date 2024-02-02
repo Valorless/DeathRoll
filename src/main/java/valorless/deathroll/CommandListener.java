@@ -1,5 +1,7 @@
 package valorless.deathroll;
 
+import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -7,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import valorless.valorlessutils.ValorlessUtils.Log;
-import valorless.valorlessutils.ValorlessUtils.Utils;
+import valorless.valorlessutils.utils.Utils;
 
 public class CommandListener implements CommandExecutor {
 	
@@ -32,6 +34,16 @@ public class CommandListener implements CommandExecutor {
     		if(!Main.config.GetBool("enabled")) return false;
     		if (sender instanceof Player) {
     			Player player = (Player) sender;
+        		List<String> blacklist = Main.config.GetStringList("blacklist");
+        		if(blacklist != null) {
+        			if(blacklist.size() != 0) {
+        				//Log.Debug(Main.plugin, "Player World: " + player.getWorld().getName());
+        				for(String world : blacklist) {
+        					//Log.Debug(Main.plugin, "Blacklist: " + world);
+        					if(player.getWorld().getName().equalsIgnoreCase(world)) return false;
+        				}
+        			}
+        		}
     			if(!player.hasPermission("deathroll.roll")) {
     				player.sendMessage(Lang.Get("no-permission"));
     			} else {

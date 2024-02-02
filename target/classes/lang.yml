@@ -4,27 +4,25 @@
 # +------------------------------------------------------+ #
 ############################################################
 
-### NOTE: You cannot change %s. %s is used when formatting messages.
-# You may move %s around, but cannot rename it.
+### NOTE: Supports PlaceholderAPI
 
-# Placeholder {prefix}.
+# Placeholder %prefix%.
 prefix: '&7[&4Death&6Roll&7]&r'
 
 # Sent to the player if they don't have the permission 'deathrolling.roll'.
-no-permission: '{prefix} &cSorry, you do not have permission to do this.'
+no-permission: '%prefix% &cSorry, you do not have permission to do this.'
 
 # Sent to the player if they do the command without a value.
-how-to: '{prefix} /deathroll <value>'
+how-to: '%prefix% /deathroll <value>'
 
 # Send to the player if the value is 1 or lower.
-value-error: '{prefix} value cannot be 1 or lower!'
+value-error: '%prefix% value cannot be 1 or lower!'
 
 # Sent to all players when someone rolls.
-# 1. %s - Player's name.
-# 2. %s - What they rolled.
-# 3. %s - Highest possible to be rolled.
-roll: '{prefix} &e%s&r rolls &e%s &7(1-%s)'
+roll: '%prefix% &e%player%&r rolls &e%roll% &7(1-%roll-out-of%)'
 
 # Sent to all players when someone rolls 1, aka loses.
-# %s - Player's name.
-loser: '{prefix} &e%s&r lost!'
+loser: '%prefix% &e%player%&r lost!'
+
+# Sent to the player if they're in a world that's blacklisted.
+no-access: '%prefix% &cSorry, DeathRolling is disabled in this world.'

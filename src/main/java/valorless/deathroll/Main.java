@@ -1,9 +1,10 @@
 package valorless.deathroll;
 
+import valorless.deathroll.hooks.PlaceholderAPIHook;
 import valorless.valorlessutils.ValorlessUtils.Log;
 import valorless.valorlessutils.config.Config;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -16,9 +17,12 @@ public final class Main extends JavaPlugin implements Listener {
 	public static String Name = "§7[§4Death§6Roll§7]§r";
 	public static Config config;
     
-    public String[] commands = {
-    		"deathroll", "roll", "dr"
-    };
+    public List<String> commands = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{ 
+		add("deathroll"); 
+		}
+	};
 	
 	public void onLoad() {
 		plugin = this;
@@ -30,29 +34,68 @@ public final class Main extends JavaPlugin implements Listener {
 		CommandListener.plugin = this;
 	}
 	
+	@SuppressWarnings("unused")
+	boolean ValorlessUtils() {
+		Log.Debug(plugin, "Checking ValorlessUtils");
+		
+		int requiresBuild = 173;
+		
+		String ver = Bukkit.getPluginManager().getPlugin("ValorlessUtils").getDescription().getVersion();
+		//Log.Debug(plugin, ver);
+		String[] split = ver.split("[.]");
+		int major = Integer.valueOf(split[0]);
+		int minor = Integer.valueOf(split[1]);
+		int hotfix = Integer.valueOf(split[2]);
+		int build = Integer.valueOf(split[3]);
+		
+		if(build < requiresBuild) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        		public void run() {
+        			Log.Error(plugin, String.format("HavenBags requires ValorlessUtils build %s or newer, found %s. (%s)", requiresBuild, build, ver));
+        			Log.Error(plugin, "https://www.spigotmc.org/resources/valorlessutils.109586/");
+        			Bukkit.getPluginManager().disablePlugin(plugin);
+        		}
+    		}, 10);
+			return false;
+		}
+		else return true;
+	}
+	
 	@Override
     public void onEnable() {
 		Log.Debug(plugin, "DeathRolling Debugging Enabled!");
 		
+		// Check if a correct version of ValorlessUtils is in use, otherwise don't run the rest of the code.
+		if(!ValorlessUtils()) return;
+		
+		PlaceholderAPIHook.Hook();
+		
 		//Config
 		config.AddValidationEntry("debug", "false");
 		config.AddValidationEntry("enabled", "true");
+		config.AddValidationEntry("global", "false");
+		config.AddValidationEntry("range", 100);
+		config.AddValidationEntry("max-roll", 10000);
 		config.AddValidationEntry("loss-sound", "ENTITY_VILLAGER_NO");
 		config.AddValidationEntry("loss-volume", 1);
 		config.AddValidationEntry("loss-pitch", 1);
 		config.AddValidationEntry("roll-sound", "ENTITY_PLAYER_LEVELUP");
 		config.AddValidationEntry("roll-volume", 1);
 		config.AddValidationEntry("roll-pitch", 1);
+		config.AddValidationEntry("blacklist", new ArrayList<String>() {
+			private static final long serialVersionUID = 1L;
+		{ add("world_name"); add("world_name_nether"); add("world_name_end"); add("another_world"); }} );
 		Log.Debug(plugin, "Validating config.yml");
 		config.Validate();
 		
 		//Lang
-		Lang.lang.AddValidationEntry("prefix", "&7[&4Death&6Rolling&7]&r");
-		Lang.lang.AddValidationEntry("no-permission", "{prefix} &cSorry, you do not have permission to do this.");
-		Lang.lang.AddValidationEntry("how-to", "{prefix} /deathroll <value>");
-		Lang.lang.AddValidationEntry("value-error", "{prefix} value cannot be 1 or lower!");
-		Lang.lang.AddValidationEntry("roll", "{prefix} &e%s&r rolls &e%s &8(1-%s)");
-		Lang.lang.AddValidationEntry("loser", "{prefix} &e%s&r lost!");
+		Lang.lang.AddValidationEntry("prefix", "&7[&4Death&6Roll&7]&r");
+		Lang.lang.AddValidationEntry("no-permission", "%prefix% &cSorry, you do not have permission to do this.");
+		Lang.lang.AddValidationEntry("how-to", "%prefix% /deathroll <value>");
+		Lang.lang.AddValidationEntry("value-error", "%prefix% value cannot be 1 or lower!");
+		Lang.lang.AddValidationEntry("roll", "%prefix% &e%player%&r rolls &e%roll% &8(1-%roll-out-of%)");
+		Lang.lang.AddValidationEntry("loser", "%prefix% &e%player%&r lost!");
+		Lang.lang.AddValidationEntry("no-access", "%prefix% &cSorry, DeathRolling is disabled in this world.");
 		Log.Debug(plugin, "Validating lang.yml");
 		Lang.lang.Validate();
 				
@@ -64,9 +107,13 @@ public final class Main extends JavaPlugin implements Listener {
     }
     
     public void RegisterCommands() {
-    	 for (int i = 0; i < commands.length; i++) {
-    		Log.Debug(plugin, "Registering Command: " + commands[i]);
-    		getCommand(commands[i]).setExecutor(new CommandListener());
+
+		for(String cmd : config.GetStringList("commands")) {
+			commands.add(cmd);
+		}
+    	 for (int i = 0; i < commands.size(); i++) {
+    		Log.Debug(plugin, "Registering Command: " + commands.get(i));
+    		getCommand(commands.get(i)).setExecutor(new CommandListener());
     	}
     }
 }

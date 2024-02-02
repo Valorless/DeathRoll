@@ -11,6 +11,21 @@ debug: false
 # Reload command is always enabled.
 enabled: true
 
+# Plugin's commands. (Requires restart)
+# /Deathroll cannot be disabled, as it is default.
+commands:
+ - roll
+ - dr
+
+# Are rolls announced globally?
+global: false
+
+# Range in which players can see rolls.
+range: 100
+
+# Highest allowed roll to make.
+max-roll: 10000
+
 # Sound played to the losing player.
 # Sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 loss-sound: 'ENTITY_VILLAGER_NO'
@@ -22,3 +37,10 @@ loss-pitch: 1
 roll-sound: 'ENTITY_PLAYER_LEVELUP'
 roll-volume: 1
 roll-pitch: 1
+
+# Worlds blocked from seeing and using rolls.
+blacklist:
+ - world_name
+ - world_name_nether
+ - world_name_end
+ - another_world
