@@ -68,7 +68,7 @@ body:
       label: Issue Confirmation
       description: Please confirm the following below.
       options:
-        - label: I have downloaded and tried the latest version of HavenBags and the issue still persists.
+        - label: I have downloaded and tried the latest version of DeathRoll and the issue still persists.
           required: true
         - label: I have provided sufficient information for the issue to be replicated.
           required: true
