@@ -7,11 +7,16 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import valorless.valorlessutils.sound.SFX;
 import valorless.valorlessutils.utils.Utils;
 
-public class DeathRoll {
+public class DeathRoll implements Listener {
+	
+	public static Player currentLoser;
 
 	public static void Roll(Player player, String value) {
 		Random rand = new Random();
@@ -58,10 +63,14 @@ public class DeathRoll {
 		}
 		
 		if(randomNum == 1) {
+			currentLoser = player;
 			SFX.Play(Main.config.GetString("loss-sound"),
 					Main.config.GetFloat("loss-volume").floatValue(),
 					Main.config.GetFloat("loss-pitch").floatValue(),
 					player);
+			if(Main.config.GetBool("death")) {
+				player.setHealth(0);
+			}
 		}else {
 			SFX.Play(Main.config.GetString("roll-sound"),
 					Main.config.GetFloat("roll-volume").floatValue(),
@@ -69,5 +78,12 @@ public class DeathRoll {
 					player);
 		}
 		
+	}
+	
+	@EventHandler
+	void onPlayerDeath(PlayerDeathEvent event) {
+		if(event.getEntity().equals(currentLoser)) {
+			event.setDeathMessage(Lang.Get("death-message", currentLoser));
+		}
 	}
 }

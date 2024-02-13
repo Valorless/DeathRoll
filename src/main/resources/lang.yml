@@ -26,3 +26,6 @@ loser: '%prefix% &e%player%&r lost!'
 
 # Sent to the player if they're in a world that's blacklisted.
 no-access: '%prefix% &cSorry, DeathRolling is disabled in this world.'
+
+# Death message when someone loses.
+death-message: '%player% paid the consequences..'

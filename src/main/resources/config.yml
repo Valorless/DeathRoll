@@ -11,11 +11,17 @@ debug: false
 # Reload command is always enabled.
 enabled: true
 
+# Should we check for plugin updates?
+check-updates: true
+
 # Plugin's commands. (Requires restart)
 # /Deathroll cannot be disabled, as it is default.
 commands:
  - roll
  - dr
+ 
+# Kill the player that rolls 1 (the loser)
+death: false
 
 # Are rolls announced globally?
 global: false
